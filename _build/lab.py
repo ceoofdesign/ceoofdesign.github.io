@@ -4,6 +4,8 @@ Run from repo root: python3 _build/lab.py  (reuses case content from build.py)""
 import importlib.util
 from pathlib import Path
 from html import escape
+from urllib.parse import quote
+import json
 
 ROOT = Path(__file__).resolve().parent.parent
 spec = importlib.util.spec_from_file_location("site", ROOT / "_build" / "build.py")
@@ -39,6 +41,57 @@ SIDE = [
      "pending": "Needs: name, one screenshot or GIF, one line about it"},
     {"title": "Everstrat", "line": "Logo for a DeFi product", "pending": "Needs: logo files and the brief in a sentence"},
 ]
+# One label, four languages: a working demo of the localization post.
+DEMO = {
+    "en": {"name": "English", "from": "From", "to": "To", "date": "Date", "a": "Lisbon", "b": "Porto", "d": "14 Mar", "btn": "Show trains"},
+    "ru": {"name": "Русский", "from": "Откуда", "to": "Куда", "date": "Дата", "a": "Лиссабон", "b": "Порту", "d": "14 марта", "btn": "Показать поезда"},
+    "de": {"name": "Deutsch", "from": "Von", "to": "Nach", "date": "Datum", "a": "Lissabon", "b": "Porto", "d": "14. März", "btn": "Züge anzeigen"},
+    "ja": {"name": "日本語", "from": "出発", "to": "到着", "date": "日付", "a": "リスボン", "b": "ポルト", "d": "3月14日", "btn": "列車を表示"},
+}
+ARROW = '<svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" pathLength="1"/></svg>'
+ARROW_OUT = '<svg class="arr" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11l6-6M6 5h5v5" pathLength="1"/></svg>'
+
+
+def words(text, start=0.1, step=0.03):
+    """Split a sentence into words that blur in one after another."""
+    return " ".join(f'<span class="w" style="--d:{start + i * step:.2f}s">{escape(w)}</span>' for i, w in enumerate(text.split()))
+
+
+def reel(slug, big):
+    """Cover plus the case screens, stacked; lab.js crossfades them."""
+    c = CASES[slug]
+    frames = [c["cover"]] + [f for f, _, _ in c.get("gallery", []) if f.startswith("local:") and f != c["cover"]]
+    w = 2000 if big else 1024
+    imgs = "".join(
+        f'<img src="{img(f, w)}"{srcset(f) if big else ""} alt="" loading="{"eager" if i == 0 and big else "lazy"}" width="1600" height="1000"{" class=on" if i == 0 else ""}>'
+        for i, f in enumerate(frames))
+    bars = "" if len(frames) < 2 else '<span class="bars">' + "".join("<i><b></b></i>" for _ in frames) + "</span>"
+    return f'<a class="media reel{" big" if big else ""}" href="work/{slug}/" tabindex="-1" aria-hidden="true" data-mode="{"view" if big else "hover"}"><span class="glow"></span><span class="frames">{imgs}</span>{bars}</a>'
+
+
+def demo():
+    langs = "".join(f'<button type="button" role="radio" aria-checked="{"true" if k == "en" else "false"}" data-lang="{k}" lang="{k}">{escape(v["name"])}</button>' for k, v in DEMO.items())
+    e = DEMO["en"]
+    return f"""<section class="demo" aria-labelledby="demo-t">
+  <h2 class="section-title reveal" id="demo-t">One button, four languages</h2>
+  <p class="sub demo-lede">Russian and German labels run longer than English. Switch the language, then compare a button with a fixed width and one that grows with its label.</p>
+  <div class="demo-box">
+    <div class="demo-controls">
+      <div class="seg" role="radiogroup" aria-label="Language" data-seg="lang"><span class="thumb"></span>{langs}</div>
+      <div class="seg" role="radiogroup" aria-label="Button width" data-seg="fit"><span class="thumb"></span><button type="button" role="radio" aria-checked="true" data-fit="grow">Grows with label</button><button type="button" role="radio" aria-checked="false" data-fit="fixed">Fixed width</button></div>
+    </div>
+    <div class="stage" lang="en">
+      <div class="field"><span class="fl" data-k="from">{e['from']}</span><span class="fv" data-k="a">{e['a']}</span></div>
+      <div class="field"><span class="fl" data-k="to">{e['to']}</span><span class="fv" data-k="b">{e['b']}</span></div>
+      <div class="field"><span class="fl" data-k="date">{e['date']}</span><span class="fv" data-k="d">{e['d']}</span></div>
+      <span class="go"><span class="go-label" data-k="btn">{e['btn']}</span></span>
+    </div>
+    <p class="demo-read" aria-live="polite"><span class="count">{len(e['btn'])}</span> characters in the label<span class="cut">The label is cut off</span></p>
+  </div>
+  <script type="application/json" id="demo-data">{json.dumps(DEMO, ensure_ascii=False)}</script>
+</section>"""
+
+
 TALKS = [
     ("Workshop", "The first steps towards your design system", "Galary Design, Tokyo. Hands-on Figma session, Oct 2025.",
      "https://www.meetup.com/galary-ux-ui-design-community/events/?type=past", "11 participants"),
@@ -53,6 +106,7 @@ TALKS = [
 
 def head(title, desc, depth):
     pre = "../" * depth
+    JA_TEXT = quote("".join(sorted(set("".join(DEMO["ja"].values())))))
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -66,6 +120,9 @@ def head(title, desc, depth):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap&text={JA_TEXT}" rel="stylesheet">
+<script>document.documentElement.classList.add("js")</script>
+<script src="{pre}lab/lab.js" defer></script>
 <link rel="stylesheet" href="{pre}lab/lab.css">
 </head>
 <body>
@@ -90,24 +147,24 @@ def chips(items):
 
 def big_card(slug, proof):
     c = CASES[slug]
-    return f"""<article class="feature">
+    return f"""<article class="feature reveal">
   <header class="feature-head">
     <div><h2><a href="work/{slug}/">{escape(c['title'].split(':')[0])}</a></h2><p class="sub">{escape(c['card'])}</p></div>
     <div class="chips">{chips(proof)}</div>
   </header>
-  <a class="media" href="work/{slug}/" tabindex="-1" aria-hidden="true"><img src="{img(c['cover'], 2000)}"{srcset(c['cover'])} alt="" loading="lazy" width="1600" height="1000"></a>
+  {reel(slug, True)}
 </article>"""
 
 
 def small_card(slug, proof):
     c = CASES[slug]
-    return f"""<article class="card">
-  <a class="media" href="work/{slug}/" tabindex="-1" aria-hidden="true"><img src="{img(c['cover'], 1024)}" alt="" loading="lazy" width="1600" height="1000"></a>
+    return f"""<article class="card reveal">
+  {reel(slug, False)}
   <div class="card-body">
     <h3><a href="work/{slug}/">{escape(c['title'].split(':')[0])}</a></h3>
     <p class="sub">{escape(c['title'].split(': ', 1)[-1].capitalize())}</p>
     <div class="chips">{chips(proof)}</div>
-    <a class="btn" href="work/{slug}/">Read the case study</a>
+    <a class="btn" href="work/{slug}/">{ARROW}<span>Read the case study</span></a>
   </div>
 </article>"""
 
@@ -116,18 +173,18 @@ def index():
     side = []
     for s in SIDE:
         if s.get("pending"):
-            side.append(f"""<article class="card pending"><span class="media ph" aria-hidden="true"></span><div class="card-body"><h3>{escape(s['title'])}</h3><p class="sub">{escape(s['line'])}</p><p class="todo">{escape(s['pending'])}</p></div></article>""")
+            side.append(f"""<article class="card pending reveal"><span class="media ph" aria-hidden="true"></span><div class="card-body"><h3>{escape(s['title'])}</h3><p class="sub">{escape(s['line'])}</p><p class="todo">{escape(s['pending'])}</p></div></article>""")
         else:
-            side.append(f"""<article class="card"><a class="media" href="{s['href']}" tabindex="-1" aria-hidden="true"><img src="{img(s['img'], 1024)}" alt="" loading="lazy" width="1600" height="900"></a><div class="card-body"><h3><a href="{s['href']}">{escape(s['title'])}</a></h3><p class="sub">{escape(s['line'])}</p><a class="btn" href="{s['href']}">{escape(s['cta'])}</a></div></article>""")
-    talks = "\n".join(f"""<li><a href="{u}"><span class="kind">{k}</span><span class="t">{escape(t)}</span><span class="sub">{escape(d)}</span><span class="meta">{escape(m)}</span></a></li>""" for k, t, d, u, m in TALKS)
+            side.append(f"""<article class="card reveal"><a class="media" href="{s['href']}" tabindex="-1" aria-hidden="true"><img src="{img(s['img'], 1024)}" alt="" loading="lazy" width="1600" height="900"></a><div class="card-body"><h3><a href="{s['href']}">{escape(s['title'])}</a></h3><p class="sub">{escape(s['line'])}</p><a class="btn" href="{s['href']}">{ARROW}<span>{escape(s['cta'])}</span></a></div></article>""")
+    talks = "\n".join(f"""<li><a href="{u}"><span class="kind">{k}</span><span class="t">{escape(t)}</span><span class="sub">{escape(d)}</span><span class="meta">{escape(m)}{ARROW_OUT}</span></a></li>""" for k, t, d, u, m in TALKS)
     return head("Yar Luchkin", "Product designer in Belgrade: marketplaces, travel products and design systems.", 1) + f"""
 <section class="intro">
-  <p class="hello">Hi, I’m Yar. I’m a product designer in Belgrade, Serbia. I design marketplaces and travel products used by millions of people, build the design systems behind them, and run workshops for designers in Tokyo.</p>
-  <p class="reach">Look through the work below, or write to me at <a href="mailto:{EMAIL}">{EMAIL}</a>, on <a href="{LINKEDIN}">LinkedIn</a> or <a href="https://t.me/ceoofdesign">Telegram</a>.</p>
+  <p class="hello">{words("Hi, I’m Yar. I’m a product designer in Belgrade, Serbia. I design marketplaces and travel products used by millions of people, build the design systems behind them, and run workshops for designers in Tokyo.")}</p>
+  <p class="reach rise">Look through the work below, or write to me at <a href="mailto:{EMAIL}">{EMAIL}</a>, on <a href="{LINKEDIN}">LinkedIn</a> or <a href="https://t.me/ceoofdesign">Telegram</a>.</p>
 </section>
 
 <section aria-labelledby="work">
-  <h2 class="section-title" id="work">Product work</h2>
+  <h2 class="section-title reveal" id="work">Product work</h2>
   {big_card(*FEATURED[0])}
   {big_card(*FEATURED[1])}
   <div class="grid">
@@ -135,22 +192,24 @@ def index():
   </div>
 </section>
 
+{demo()}
+
 <section aria-labelledby="side">
-  <h2 class="section-title" id="side">Side projects</h2>
+  <h2 class="section-title reveal" id="side">Side projects</h2>
   <div class="grid">
     {''.join(side)}
   </div>
 </section>
 
 <section aria-labelledby="talks">
-  <h2 class="section-title" id="talks">Talks and writing</h2>
-  <ul class="list">
+  <h2 class="section-title reveal" id="talks">Talks and writing</h2>
+  <ul class="list reveal">
 {talks}
   </ul>
 </section>
 
 <section class="outro">
-  <p class="hello">Five years in product design, before that PR and localization for game launches. I’ve studied Japanese since 2018 and work in English.</p>
+  <p class="hello reveal">Five years in product design, before that PR and localization for game launches. I’ve studied Japanese since 2018 and work in English.</p>
   <p class="reach"><a href="mailto:{EMAIL}">{EMAIL}</a> · <a href="{LINKEDIN}">LinkedIn</a> · <a href="https://t.me/ceoofdesign">Telegram</a></p>
 </section>
 """ + foot()

@@ -122,3 +122,88 @@ p a, .reach a { text-decoration: underline; text-decoration-color: color-mix(in 
   .list .kind, .list .sub, .list .meta { grid-column: 1; grid-row: auto; }
   .media { border-radius: var(--radius); }
 }
+
+/* ---------- Motion (edition 3) ----------
+   One easing for everything that settles: fast out, long soft landing. */
+:root { --ease: cubic-bezier(0.22, 1, 0.36, 1); --warn: #e8c37a; }
+
+/* Intro words blur in one after another; later blocks do the same as they enter view */
+.js .w { display: inline-block; opacity: 0; filter: blur(10px); translate: 0 10px; animation: settle 0.8s var(--ease) var(--d, 0s) forwards; white-space: pre-wrap; }
+.js .rise { opacity: 0; animation: settle 0.8s var(--ease) 1.2s forwards; }
+@keyframes settle { to { opacity: 1; filter: blur(0); translate: 0 0; } }
+.js .reveal { opacity: 0; filter: blur(8px); translate: 0 16px; transition: opacity 0.7s var(--ease), filter 0.7s var(--ease), translate 0.7s var(--ease); transition-delay: var(--d, 0s); }
+.js .reveal.in { opacity: 1; filter: blur(0); translate: 0 0; }
+
+/* Reel: the case's screens crossfade like a short screen recording */
+.reel { position: relative; isolation: isolate; overflow: visible; background: none; outline: none; }
+.reel .frames { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; background: var(--surface); outline: 1px solid rgb(255 255 255 / 0.06); outline-offset: -1px; }
+.card .reel .frames { outline: none; }
+.reel img { position: absolute; inset: 0; opacity: 0; scale: 1.04; transition: opacity 0.7s ease, scale 3.2s var(--ease); }
+.reel img.on { opacity: 1; scale: 1; }
+.reel .bars { position: absolute; left: 14px; right: 14px; bottom: 12px; display: flex; gap: 4px; z-index: 2; opacity: 0; transition: opacity 0.3s ease; }
+.reel.playing .bars, .reel:focus-within .bars { opacity: 1; }
+.reel .bars i { flex: 1; height: 3px; border-radius: 3px; background: rgb(255 255 255 / 0.28); overflow: hidden; backdrop-filter: blur(4px); }
+.reel .bars b { display: block; height: 100%; width: 0; background: #fff; }
+.reel .bars i.done b { width: 100%; }
+.reel .bars i.now b { animation: fill var(--slide, 2.4s) linear forwards; }
+.reel.paused .bars i.now b { animation-play-state: paused; }
+@keyframes fill { to { width: 100%; } }
+
+/* Ambient light: a blurred copy of the current screen glows behind the big cards */
+.reel .glow { position: absolute; inset: 8% 6%; z-index: -1; border-radius: 40%; background: var(--glow) center / cover; filter: blur(60px) saturate(1.4); opacity: 0; transition: opacity 0.9s ease, background-image 0.7s ease; animation: drift 14s ease-in-out infinite; }
+.reel.big.playing .glow { opacity: 0.45; }
+@keyframes drift { 0%, 100% { translate: 0 0; } 33% { translate: 3% -4%; } 66% { translate: -3% 3%; } }
+@media (hover: hover) { .card:hover .reel .glow { opacity: 0.35; } }
+.card { overflow: visible; isolation: isolate; }
+.card .reel { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+
+/* Arrows draw themselves on hover */
+.arr { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.arr path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.6s var(--ease) 0.05s; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 0; }
+.btn .arr { width: 0; transition: width 0.3s var(--ease), margin 0.3s var(--ease); }
+@media (hover: hover) {
+  .card:hover .btn .arr, .btn:hover .arr { width: 1em; margin-right: 6px; }
+  .card:hover .arr path, .btn:hover .arr path, .list a:hover .arr path { stroke-dashoffset: 0; }
+}
+.btn:focus-visible .arr { width: 1em; margin-right: 6px; }
+.btn:focus-visible .arr path, .list a:focus-visible .arr path { stroke-dashoffset: 0; }
+.list .meta { display: inline-flex; align-items: center; gap: 6px; }
+@media (hover: none) { .arr path { stroke-dashoffset: 0; } .btn .arr { width: 1em; margin-right: 6px; } }
+
+/* Demo: one button, four languages */
+.demo-lede { margin: -8px 0 20px; max-width: 36em; }
+.demo-box { background: var(--surface); border-radius: var(--radius-lg); padding: clamp(16px, 3vw, 28px); }
+.demo-controls { display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: space-between; margin-bottom: clamp(28px, 5vw, 44px); }
+.seg { position: relative; display: inline-flex; padding: 3px; border-radius: 12px; background: var(--bg); }
+.seg button { position: relative; z-index: 1; font: inherit; font-size: 0.875rem; font-weight: 500; color: var(--muted); background: none; border: 0; padding: 7px 12px; border-radius: 9px; cursor: pointer; transition: color 0.2s ease, scale 0.15s ease-out; }
+.seg button[lang="ja"] { font-family: "Noto Sans JP", var(--font); }
+.seg button[aria-checked="true"] { color: var(--text); }
+@media (hover: hover) { .seg button:hover { color: var(--text); } }
+.seg button:active { scale: 0.96; }
+.seg .thumb { position: absolute; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: 9px; background: var(--surface-2); transition: translate 0.4s var(--ease), width 0.4s var(--ease); }
+.stage { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; padding: 8px; border-radius: 18px; background: #fff; color: #17171a; }
+.stage:lang(ja) .fl, .stage:lang(ja) .fv, .stage:lang(ja) .go-label { font-family: "Noto Sans JP", var(--font); }
+.field { flex: 1 1 120px; min-width: 0; padding: 8px 12px; border-radius: 12px; background: #f2f2f4; display: flex; flex-direction: column; }
+.fl { font-size: 0.75rem; color: #6c6c74; }
+.fv { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl, .fv, .go-label { transition: opacity 0.18s ease, filter 0.18s ease; }
+.swap .fl, .swap .fv, .swap .go-label { opacity: 0; filter: blur(4px); }
+.go { flex: none; display: flex; align-items: center; justify-content: center; padding: 0 18px; border-radius: 12px; background: #17171a; color: #fff; font-weight: 500; overflow: hidden; transition: width 0.45s var(--ease), box-shadow 0.3s ease; }
+.go-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.go.is-cut { box-shadow: 0 0 0 2px var(--warn); }
+.demo-read { margin: 14px 2px 0; font-size: 0.875rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.count { color: var(--text); }
+.cut { color: var(--warn); opacity: 0; translate: 0 4px; transition: opacity 0.25s ease, translate 0.25s var(--ease); }
+.cut.show { opacity: 1; translate: 0 0; }
+
+@media (max-width: 720px) {
+  .reel .bars { left: 10px; right: 10px; bottom: 8px; }
+  .demo-controls { flex-direction: column; align-items: flex-start; }
+  .field { flex-basis: 40%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .w, .js .rise, .js .reveal { opacity: 1; filter: none; translate: none; animation: none; transition: none; }
+  .reel img, .reel .glow, .seg .thumb, .go, .arr path, .btn .arr { transition: none; animation: none; }
+}
