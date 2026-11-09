@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Experimental edition of the portfolio, published under /lab/.
-Run from repo root: python3 _build/lab.py  (reuses content from build.py)"""
+"""Lab edition 2: a personal, work-first page in one narrow column.
+Run from repo root: python3 _build/lab.py  (reuses case content from build.py)"""
 import importlib.util
 from pathlib import Path
 from html import escape
@@ -10,8 +10,8 @@ spec = importlib.util.spec_from_file_location("site", ROOT / "_build" / "build.p
 site = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(site)
 
-CASES, TALKS, EMAIL, LINKEDIN = site.CASES, site.TALKS, site.EMAIL, site.LINKEDIN
-NUMS = ["一", "二", "三", "四", "五", "六", "七", "八"]
+CASES = {c["slug"]: c for c in site.CASES}
+EMAIL, LINKEDIN = site.EMAIL, site.LINKEDIN
 
 
 def img(file, w=1600, depth=1):
@@ -22,6 +22,35 @@ def srcset(file, depth=1):
     return site.srcset(file, depth)
 
 
+# Proof shown on each card: only numbers Yar has stated himself.
+FEATURED = [
+    ("playerok", ["4M+ users", "Home page owner"]),
+    ("design-system", ["2,000+ components", "4 brands", "Mockups ~2× faster"]),
+]
+STUDIES = [
+    ("rail-ninja", ["1M+ tickets a year"]),
+    ("travel-ninja", ["Built from zero"]),
+    ("firebird-tours", ["B2C + B2B"]),
+]
+SIDE = [
+    {"title": "TON Learn", "line": "Concept for a Telegram Mini App that teaches Web3 basics", "href": "../work/ton-learn/",
+     "img": "z6qjIoTX3oU3K5DU6TvPd8UEPsQ.png", "cta": "See the concept"},
+    {"title": "My game", "line": "A game I’m building on my own. There’s a demo with a first location and the core mechanics.",
+     "pending": "Needs: name, one screenshot or GIF, one line about it"},
+    {"title": "Everstrat", "line": "Logo for a DeFi product", "pending": "Needs: logo files and the brief in a sentence"},
+]
+TALKS = [
+    ("Workshop", "The first steps towards your design system", "Galary Design, Tokyo. Hands-on Figma session, Oct 2025.",
+     "https://www.meetup.com/galary-ux-ui-design-community/events/?type=past", "11 participants"),
+    ("Talk", "Intro to design systems", "Galary Design, Tokyo. Online, in English with some Japanese, Sep 2025.",
+     "https://www.meetup.com/galary-ux-ui-design-community/events/?type=past", "50 sign-ups"),
+    ("Post", "When a button breaks in Russian", "A localization edge case in the Google Pixel screenshot tool, and three ways to design for it.",
+     LINKEDIN + "recent-activity/all/", "LinkedIn"),
+    ("Research", "Ways of the artists’ promotion in the Russian digital art market", "Bachelor’s research at HSE University, written in English, 2021.",
+     "https://www.researchgate.net/publication/358564840", "ResearchGate"),
+]
+
+
 def head(title, desc, depth):
     pre = "../" * depth
     return f"""<!doctype html>
@@ -29,217 +58,126 @@ def head(title, desc, depth):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
 <title>{escape(title)}</title>
 <meta name="description" content="{escape(desc)}">
 <meta name="robots" content="noindex">
 <link rel="icon" href="{pre}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Shippori+Mincho+B1:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{pre}lab/lab.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="bar">
-  <a class="bar-name" href="{pre}lab/">Yar Luchkin</a>
-  <nav aria-label="Main">
-    <a href="{pre}lab/#product">Product</a>
-    <a href="{pre}lab/#craft">Craft</a>
-    <a href="{pre}lab/#path">Path</a>
-    <a href="{pre}lab/#questions">Questions</a>
-    <a href="mailto:{EMAIL}">Email</a>
-  </nav>
-</header>
-<main id="main">
+<main id="main" class="col">
 """
 
 
 def foot():
     return f"""</main>
-<footer class="colophon">
-  <p>Yar Luchkin, product designer. Set in Shippori Mincho and IBM Plex Sans. Built by hand, hosted on GitHub Pages.</p>
+<footer class="col foot">
+  <p>Yar Luchkin, Belgrade. Lab edition: an experiment, the main site is at <a href="https://ceoofdesign.github.io/">ceoofdesign.github.io</a>.</p>
 </footer>
-<script>
-(function () {{
-  var els = document.querySelectorAll('[data-tz]');
-  function tick() {{
-    els.forEach(function (el) {{
-      try {{
-        el.textContent = new Intl.DateTimeFormat('en-GB', {{ hour: '2-digit', minute: '2-digit', timeZone: el.dataset.tz }}).format(new Date());
-      }} catch (e) {{}}
-    }});
-  }}
-  tick(); setInterval(tick, 30000);
-}})();
-</script>
 </body>
 </html>
 """
 
 
-def rail(ja, en_id=None):
-    """Vertical Japanese label in the left rail: decorative, the English heading carries meaning."""
-    return f'<p class="rail" lang="ja" aria-hidden="true">{ja}</p>'
+def chips(items):
+    return "".join(f'<span class="chip">{escape(t)}</span>' for t in items)
 
 
-CRAFT = [
-    {"title": "TON Learn", "what": "Concept for a Telegram Mini App that teaches Web3 basics", "href": "../work/ton-learn/",
-     "img": "z6qjIoTX3oU3K5DU6TvPd8UEPsQ.png", "alt": "TON Learn title slide"},
-    {"title": "Everstrat", "what": "Logo for a DeFi product", "pending": "Needs: logo files and a sentence on the brief"},
-    {"title": "Interium", "what": "Presentations and social visuals for Realme, SIBUR, EuroChem", "pending": "Needs: 3–4 slides or posts you are allowed to show"},
-    {"title": "MRC", "what": "Brand style, print and merch for a recruitment company", "pending": "Needs: a few photos or mockups"},
-]
+def big_card(slug, proof):
+    c = CASES[slug]
+    return f"""<article class="feature">
+  <header class="feature-head">
+    <div><h2><a href="work/{slug}/">{escape(c['title'].split(':')[0])}</a></h2><p class="sub">{escape(c['card'])}</p></div>
+    <div class="chips">{chips(proof)}</div>
+  </header>
+  <a class="media" href="work/{slug}/" tabindex="-1" aria-hidden="true"><img src="{img(c['cover'], 2000)}"{srcset(c['cover'])} alt="" loading="lazy" width="1600" height="1000"></a>
+</article>"""
 
-FAQ = [
-    ("Do you need a visa to work in Japan?",
-     "Yes, a work visa sponsored by the employer. I hold a bachelor’s degree and have five years of professional design experience, which is the usual basis for it."),
-    ("What language do you work in?",
-     "English. My Japanese is around N4–N3: enough for daily life and simple conversations, not yet for work. I’ve been studying since 2018 and keep going."),
-    ("What kind of role are you looking for?",
-     "A product designer position in a product team, for the long run. I’m strongest in marketplaces, travel and e-commerce, and in teams that need a design system."),
-    ("Where are you now?",
-     "Belgrade, Serbia (UTC+1). I already work remotely with a team in another time zone."),
-]
+
+def small_card(slug, proof):
+    c = CASES[slug]
+    return f"""<article class="card">
+  <a class="media" href="work/{slug}/" tabindex="-1" aria-hidden="true"><img src="{img(c['cover'], 1024)}" alt="" loading="lazy" width="1600" height="1000"></a>
+  <div class="card-body">
+    <h3><a href="work/{slug}/">{escape(c['title'].split(':')[0])}</a></h3>
+    <p class="sub">{escape(c['title'].split(': ', 1)[-1].capitalize())}</p>
+    <div class="chips">{chips(proof)}</div>
+    <a class="btn" href="work/{slug}/">Read the case study</a>
+  </div>
+</article>"""
 
 
 def index():
-    product_rows = []
-    for n, c in enumerate(CASES):
-        meta = dict(c["meta"])
-        period = meta.get("Period") or meta.get("Year") or ""
-        company = meta.get("Company") or ""
-        product_rows.append(f"""  <li>
-    <a class="work-row" href="work/{c['slug']}/">
-      <span class="num" lang="ja" aria-hidden="true">{NUMS[n]}</span>
-      <span class="work-text">
-        <span class="work-title">{escape(c['title'])}</span>
-        <span class="work-line">{escape(c['card'])}</span>
-        <span class="work-meta">{escape(company)}<span class="sep" aria-hidden="true"></span>{escape(period)}</span>
-      </span>
-      <span class="work-img"><img src="{img(c['cover'], 1024)}" alt="" loading="{'eager' if n == 0 else 'lazy'}" width="1600" height="1000"></span>
-    </a>
-  </li>""")
-    craft_items = []
-    for k in CRAFT:
-        if k.get("pending"):
-            craft_items.append(f"""  <li class="craft-item pending"><span class="craft-ph" aria-hidden="true"></span><h3>{escape(k['title'])}</h3><p>{escape(k['what'])}</p><p class="todo">{escape(k['pending'])}</p></li>""")
+    side = []
+    for s in SIDE:
+        if s.get("pending"):
+            side.append(f"""<article class="card pending"><span class="media ph" aria-hidden="true"></span><div class="card-body"><h3>{escape(s['title'])}</h3><p class="sub">{escape(s['line'])}</p><p class="todo">{escape(s['pending'])}</p></div></article>""")
         else:
-            craft_items.append(f"""  <li class="craft-item"><a href="{k['href']}"><span class="craft-img"><img src="{img(k['img'], 1024)}" alt="{escape(k['alt'])}" loading="lazy" width="1600" height="900"></span><h3>{escape(k['title'])}</h3><p>{escape(k['what'])}</p></a></li>""")
-    path = "\n".join(f"""  <li><span class="when">{y}</span><span class="what"><strong>{escape(co)}</strong>{escape(r)}</span></li>""" for y, now, co, r, p in site.ROUTE)
-    talks = "\n".join(f"""  <li><time datetime="{d}">{dl}</time><span><a href="{u}">{escape(t)}</a><br><span class="muted">Galary Design, Tokyo. {escape(n)}.</span></span></li>""" for d, dl, t, p, n, u in TALKS)
-    faq = "\n".join(f"""  <details><summary>{escape(q)}</summary><p>{escape(a)}</p></details>""" for q, a in FAQ)
-    return head("Yar Luchkin, product designer", "Product designer: design systems, marketplaces and travel products for people across languages.", 1) + f"""
-<section class="hero">
-  <div class="hero-main">
-    <h1>Yar Luchkin</h1>
-    <p class="hero-line">Product designer. I design marketplaces and travel products for people who use them in many languages, and the design systems that hold them together.</p>
-  </div>
-  <p class="hero-vertical" lang="ja" aria-hidden="true">プロダクトデザイナー</p>
-  <dl class="hero-facts">
-    <div><dt>Now</dt><dd>Playerok, home page</dd></div>
-    <div><dt>Before</dt><dd>Rail Ninja, Firebird Tours</dd></div>
-    <div><dt>Belgrade</dt><dd><time data-tz="Europe/Belgrade">--:--</time></dd></div>
-    <div><dt>Tokyo</dt><dd><time data-tz="Asia/Tokyo">--:--</time></dd></div>
-  </dl>
+            side.append(f"""<article class="card"><a class="media" href="{s['href']}" tabindex="-1" aria-hidden="true"><img src="{img(s['img'], 1024)}" alt="" loading="lazy" width="1600" height="900"></a><div class="card-body"><h3><a href="{s['href']}">{escape(s['title'])}</a></h3><p class="sub">{escape(s['line'])}</p><a class="btn" href="{s['href']}">{escape(s['cta'])}</a></div></article>""")
+    talks = "\n".join(f"""<li><a href="{u}"><span class="kind">{k}</span><span class="t">{escape(t)}</span><span class="sub">{escape(d)}</span><span class="meta">{escape(m)}</span></a></li>""" for k, t, d, u, m in TALKS)
+    return head("Yar Luchkin", "Product designer in Belgrade: marketplaces, travel products and design systems.", 1) + f"""
+<section class="intro">
+  <p class="hello">Hi, I’m Yar. I’m a product designer in Belgrade, Serbia. I design marketplaces and travel products used by millions of people, build the design systems behind them, and run workshops for designers in Tokyo.</p>
+  <p class="reach">Look through the work below, or write to me at <a href="mailto:{EMAIL}">{EMAIL}</a>, on <a href="{LINKEDIN}">LinkedIn</a> or <a href="https://t.me/ceoofdesign">Telegram</a>.</p>
 </section>
 
-<section class="part" id="product">
-  {rail("第一部　プロダクト")}
-  <div class="part-body">
-    <header class="part-head">
-      <h2>Product</h2>
-      <p>Work shipped in product teams: a marketplace, train and hotel booking, and the design system behind them.</p>
-    </header>
-    <ol class="work-list">
-{chr(10).join(product_rows)}
-    </ol>
+<section aria-labelledby="work">
+  <h2 class="section-title" id="work">Product work</h2>
+  {big_card(*FEATURED[0])}
+  {big_card(*FEATURED[1])}
+  <div class="grid">
+    {''.join(small_card(*s) for s in STUDIES)}
   </div>
 </section>
 
-<section class="part" id="craft">
-  {rail("第二部　クラフト")}
-  <div class="part-body">
-    <header class="part-head">
-      <h2>Craft</h2>
-      <p>Identity, visuals and concepts. Smaller pieces that show how I work with type, colour and an idea.</p>
-    </header>
-    <ul class="craft">
-{chr(10).join(craft_items)}
-    </ul>
+<section aria-labelledby="side">
+  <h2 class="section-title" id="side">Side projects</h2>
+  <div class="grid">
+    {''.join(side)}
   </div>
 </section>
 
-<section class="part" id="path">
-  {rail("経歴")}
-  <div class="part-body">
-    <header class="part-head"><h2>Path</h2><p>From PR and localization to product design.</p></header>
-    <ol class="path">
-{path}
-    </ol>
-    <div class="two">
-      <div>
-        <h3 class="small-head">Talks</h3>
-        <ul class="plain">
+<section aria-labelledby="talks">
+  <h2 class="section-title" id="talks">Talks and writing</h2>
+  <ul class="list">
 {talks}
-        </ul>
-      </div>
-      <div>
-        <h3 class="small-head">Writing</h3>
-        <ul class="plain">
-  <li><time datetime="2021-05">May 2021</time><span><a href="https://www.researchgate.net/publication/358564840">Ways of the artists’ promotion in the Russian contemporary digital art market</a><br><span class="muted">Bachelor’s research at HSE University, in English.</span></span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  </ul>
 </section>
 
-<section class="part" id="questions">
-  {rail("よくある質問")}
-  <div class="part-body">
-    <header class="part-head"><h2>Questions recruiters ask</h2></header>
-    <div class="faq">
-{faq}
-    </div>
-  </div>
-</section>
-
-<section class="part contact" id="contact">
-  {rail("連絡")}
-  <div class="part-body">
-    <h2 class="contact-title">Write to me</h2>
-    <p class="contact-links"><a href="mailto:{EMAIL}">{EMAIL}</a><a href="{LINKEDIN}">LinkedIn</a><a href="https://t.me/ceoofdesign">Telegram</a></p>
-  </div>
+<section class="outro">
+  <p class="hello">Five years in product design, before that PR and localization for game launches. I’ve studied Japanese since 2018 and work in English.</p>
+  <p class="reach"><a href="mailto:{EMAIL}">{EMAIL}</a> · <a href="{LINKEDIN}">LinkedIn</a> · <a href="https://t.me/ceoofdesign">Telegram</a></p>
 </section>
 """ + foot()
 
 
-def case_page(i, c):
+def case_page(slug, c):
     depth = 3
     pre = "../" * depth
-    nxt = CASES[(i + 1) % len(CASES)]
-    meta = "\n".join(f"<div><dt>{escape(k)}</dt><dd>{escape(v)}</dd></div>" for k, v in c["meta"])
+    order = [s for s, _ in FEATURED + STUDIES]
+    nxt = CASES[order[(order.index(slug) + 1) % len(order)]]
+    meta = "".join(f"<div><dt>{escape(k)}</dt><dd>{escape(v)}</dd></div>" for k, v in c["meta"])
     body = "\n".join(f'<section class="case-sec"><h2>{h}</h2><div class="prose">{html}</div></section>' for h, html in c["sections"])
     figs = "\n".join(
         f'<figure><img src="{img(f, 2000, depth)}"{srcset(f, depth)} alt="{escape(cap or c["title"])}" loading="lazy" width="1600" height="1000">{f"<figcaption>{escape(cap)}</figcaption>" if cap else ""}</figure>'
-        for f, cap, wide in c.get("gallery", []))
-    n = NUMS[i] if c in CASES else ""
+        for f, cap, wide in c.get("gallery", []) if f != c["cover"])
     return head(f"{c['title']} | Yar Luchkin", c["card"], depth) + f"""
+<p class="back"><a href="{pre}lab/">← All work</a></p>
 <article class="case">
-  <header class="case-top">
-    <p class="crumb"><a href="{pre}lab/#product">Product</a></p>
-    <span class="case-num" lang="ja" aria-hidden="true">{n}</span>
-    <h1>{escape(c['title'])}</h1>
-    <p class="case-lede">{escape(c['lede'])}</p>
-    <dl class="case-meta">{meta}</dl>
-  </header>
-  <figure class="case-cover"><img src="{img(c['cover'], 2000, depth)}"{srcset(c['cover'], depth)} alt="{escape(c['cover_alt'])}" width="1600" height="1000" fetchpriority="high"></figure>
-  <div class="case-body">
+  <h1>{escape(c['title'])}</h1>
+  <p class="hello">{escape(c['lede'])}</p>
+  <dl class="meta-grid">{meta}</dl>
+  <figure class="cover"><img src="{img(c['cover'], 2000, depth)}"{srcset(c['cover'], depth)} alt="{escape(c['cover_alt'])}" width="1600" height="1000" fetchpriority="high"></figure>
 {body}
-  </div>
-  <div class="case-gallery">
+  <div class="gallery">
 {figs}
   </div>
-  <nav class="case-next" aria-label="Next case"><a href="../{nxt['slug']}/"><span class="muted">Next</span>{escape(nxt['title'])}</a></nav>
+  <p class="next"><a href="../{nxt['slug']}/"><span class="sub">Next</span>{escape(nxt['title'])}</a></p>
 </article>
 """ + foot()
 
@@ -248,10 +186,10 @@ def main():
     lab = ROOT / "lab"
     lab.mkdir(exist_ok=True)
     (lab / "index.html").write_text(index(), encoding="utf-8")
-    for i, c in enumerate(CASES):
-        d = lab / "work" / c["slug"]
+    for slug, c in CASES.items():
+        d = lab / "work" / slug
         d.mkdir(parents=True, exist_ok=True)
-        (d / "index.html").write_text(case_page(i, c), encoding="utf-8")
+        (d / "index.html").write_text(case_page(slug, c), encoding="utf-8")
     print("lab built")
 
 

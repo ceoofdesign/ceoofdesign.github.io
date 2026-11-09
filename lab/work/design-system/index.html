@@ -3,68 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
 <title>A design system for four travel products | Yar Luchkin</title>
 <meta name="description" content="One multi-brand component library behind Rail Ninja, Firebird Tours, Triptile and highspeedtrains.com.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Shippori+Mincho+B1:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../lab/lab.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="bar">
-  <a class="bar-name" href="../../../lab/">Yar Luchkin</a>
-  <nav aria-label="Main">
-    <a href="../../../lab/#product">Product</a>
-    <a href="../../../lab/#craft">Craft</a>
-    <a href="../../../lab/#path">Path</a>
-    <a href="../../../lab/#questions">Questions</a>
-    <a href="mailto:yar.luchkin@protonmail.com">Email</a>
-  </nav>
-</header>
-<main id="main">
+<main id="main" class="col">
 
+<p class="back"><a href="../../../lab/">← All work</a></p>
 <article class="case">
-  <header class="case-top">
-    <p class="crumb"><a href="../../../lab/#product">Product</a></p>
-    <span class="case-num" lang="ja" aria-hidden="true">二</span>
-    <h1>A design system for four travel products</h1>
-    <p class="case-lede">I built a shared design system so four booking products could look like themselves while running on one set of components.</p>
-    <dl class="case-meta"><div><dt>Company</dt><dd>Firebird Tours, Rail Ninja</dd></div>
-<div><dt>Period</dt><dd>2023–2026</dd></div>
-<div><dt>My role</dt><dd>Product designer, led design system work</dd></div>
-<div><dt>Team</dt><dd>1 junior designer, front-end developers, PMs</dd></div></dl>
-  </header>
-  <figure class="case-cover"><img src="https://framerusercontent.com/images/PuStnQIBGpmB9LFezK4gvB1uaQQ.png?scale-down-to=2000" alt="Design system component sheets: date pickers, inputs, colour tokens and typography" width="1600" height="1000" fetchpriority="high"></figure>
-  <div class="case-body">
+  <h1>A design system for four travel products</h1>
+  <p class="hello">I built a shared design system so four booking products could look like themselves while running on one set of components.</p>
+  <dl class="meta-grid"><div><dt>Company</dt><dd>Firebird Tours, Rail Ninja</dd></div><div><dt>Period</dt><dd>2023–2026</dd></div><div><dt>My role</dt><dd>Product designer, led design system work</dd></div><div><dt>Team</dt><dd>1 junior designer, front-end developers, PMs</dd></div></dl>
+  <figure class="cover"><img src="https://framerusercontent.com/images/PuStnQIBGpmB9LFezK4gvB1uaQQ.png?scale-down-to=2000" alt="Design system component sheets: date pickers, inputs, colour tokens and typography" width="1600" height="1000" fetchpriority="high"></figure>
 <section class="case-sec"><h2>Context</h2><div class="prose"><p>The group runs several travel brands for a global audience: train tickets, tours and an internal tool for travel agents. Each product had grown its own UI, and developers often rebuilt the same component for every brand.</p></div></section>
 <section class="case-sec"><h2>Problem</h2><div class="prose"><p>Design and development were slowed down by inconsistency, not by a lack of ideas. Mockups took long to prepare, handoff needed many clarifications, and the same user pattern behaved differently from site to site.</p></div></section>
 <section class="case-sec"><h2>What I did</h2><div class="prose"><ul><li><strong>Token structure.</strong> Set up colour, type and spacing tokens with themes per brand, so a component changes its look by switching a theme rather than being redrawn.</li><li><strong>Component library.</strong> Built and documented 2,000+ components and variants in Figma, from inputs and calendars to full booking blocks.</li><li><strong>Design–code link.</strong> Worked with front-end developers to match the Figma library to Storybook across different tech stacks.</li><li><strong>Workspace and rules.</strong> Reorganised the Figma workspace and wrote usage guidelines, then reviewed the junior designer’s work against them.</li></ul></div></section>
 <section class="case-sec"><h2>Outcome</h2><div class="prose"><ul><li>Preparing UI mockups took the design team roughly half the time it used to, by our own estimate.</li><li>The system shipped in four consumer products and the internal agent tool.</li><li>Fewer review rounds and handoff questions, because patterns were decided once.</li></ul><p class="note">Numbers are internal estimates; I no longer have access to the original dashboards.</p></div></section>
-  </div>
-  <div class="case-gallery">
+  <div class="gallery">
 
   </div>
-  <nav class="case-next" aria-label="Next case"><a href="../rail-ninja/"><span class="muted">Next</span>Rail Ninja: booking train tickets across countries</a></nav>
+  <p class="next"><a href="../rail-ninja/"><span class="sub">Next</span>Rail Ninja: booking train tickets across countries</a></p>
 </article>
 </main>
-<footer class="colophon">
-  <p>Yar Luchkin, product designer. Set in Shippori Mincho and IBM Plex Sans. Built by hand, hosted on GitHub Pages.</p>
+<footer class="col foot">
+  <p>Yar Luchkin, Belgrade. Lab edition: an experiment, the main site is at <a href="https://ceoofdesign.github.io/">ceoofdesign.github.io</a>.</p>
 </footer>
-<script>
-(function () {
-  var els = document.querySelectorAll('[data-tz]');
-  function tick() {
-    els.forEach(function (el) {
-      try {
-        el.textContent = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: el.dataset.tz }).format(new Date());
-      } catch (e) {}
-    });
-  }
-  tick(); setInterval(tick, 30000);
-})();
-</script>
 </body>
 </html>

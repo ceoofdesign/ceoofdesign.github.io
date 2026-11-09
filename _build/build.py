@@ -92,8 +92,8 @@ CASES = [
         "sections": [
             ("Context", "<p>Rail Ninja customers already booked trains through the group. Travel Ninja added hotels, with inventory from Expedia, so travellers could plan the rest of the trip in the same place.</p>"),
             ("Problem", "<p>A hotel search has to show a lot at once: price, location, rating, room types and the rules of each rate. People compare many options and leave if paying feels risky.</p>"),
-            ("What I did", "<ul><li><strong>Search.</strong> Results list with a map, filters by price, rating and property type, and clear total prices.</li><li><strong>Hotel page.</strong> Gallery, amenities, location and reviews in one view, with the reserve button always in reach.</li><li><strong>Rooms.</strong> Room cards that show beds, size, view and cancellation rules side by side.</li><li><strong>Checkout.</strong> A one-page booking form with the order summary next to it and a clear breakdown of taxes and fees.</li><li><strong>System.</strong> Built on the shared design system, so the product launched with the same components as Rail Ninja.</li></ul>"),
-            ("Outcome", "<p>The service launched as part of the group’s products. The live site has changed since then; these are my original designs.</p>"),
+            ("What I did", "<ul><li><strong>Search.</strong> Results list with a map, filters by price, rating and property type, and clear total prices.</li><li><strong>Hotel page.</strong> Gallery, amenities, location and reviews in one view, with the reserve button always in reach.</li><li><strong>Rooms.</strong> Room cards that show beds, size, view and cancellation rules side by side.</li><li><strong>Checkout.</strong> A one-page booking form with the order summary next to it and a clear breakdown of taxes and fees.</li></ul>"),
+            ("Outcome", "<p>These are my original designs. The live site at travel.ninja has changed since then.</p>"),
         ],
         "gallery": [
             ("local:travel-ninja/home", "Home page with search and popular destinations", True),
