@@ -39,12 +39,9 @@ CASES = [
             ("Outcome", "<p>Everything shown here is live at <a href=\"https://playerok.com/\">playerok.com</a>. The screenshots were taken from the production site in November 2026.</p>"),
         ],
         "gallery": [
-            ("local:playerok/home-topup", "Home page: quick Steam top-up and category tabs", True),
-            ("local:playerok/home-listings", "Home page: listing grid with prices, discounts and ratings", True),
             ("local:playerok/seller", "Seller landing: the main offer", True),
             ("local:playerok/seller-calc", "Seller landing: earnings calculator and premium listing", True),
             ("local:playerok/category", "Game page: PUBG Mobile UC with an instant purchase block", True),
-            ("local:playerok/category-list", "Game page: filters and 2,000+ seller offers", True),
         ],
     },
     {
