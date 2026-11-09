@@ -9,8 +9,18 @@ LINKEDIN = "https://www.linkedin.com/in/yar-luchkin/"
 SITE_URL = "https://ceoofdesign.github.io"
 
 
-def img(file, w=1600):
+def img(file, w=1600, depth=0):
+    if file.startswith("local:"):
+        name = file[6:]
+        suffix = "-1000" if w <= 1024 else ""
+        return f"{'../' * depth}assets/img/{name}{suffix}.webp"
     return f"https://framerusercontent.com/images/{file}?scale-down-to={w}"
+
+
+def srcset(file, depth=0):
+    if file.startswith("local:"):
+        return f' srcset="{img(file, 1000, depth)} 1000w, {img(file, 2000, depth)} 2000w" sizes="(max-width: 820px) 100vw, 1080px"'
+    return ""
 
 
 CASES = [
@@ -36,7 +46,7 @@ CASES = [
         "card": "Search, timetables, seat choice and checkout for a train ticket platform handling over 1M tickets a year.",
         "lede": "I redesigned the booking flow of Rail Ninja, a platform where travellers buy train tickets in many countries from one site.",
         "meta": [("Company", "Rail Ninja (Firebird Tours group)"), ("Period", "2023–2026"), ("My role", "Product designer"), ("Platforms", "Web, mobile web")],
-        "cover": "6AyHvDjTIuqSqc1iORZHDbHZCwY.png",
+        "cover": "local:rail-ninja/cover",
         "cover_alt": "Rail Ninja booking app on a phone inside a train",
         "sections": [
             ("Context", "<p>Rail Ninja sells train tickets from many national carriers. Every carrier has its own data, classes and rules, and users are travellers who often book in a language that is not their own.</p>"),
@@ -45,10 +55,10 @@ CASES = [
             ("Outcome", "<ul><li>Clearer steps and fewer decisions per screen in the checkout.</li><li>Faster feature delivery thanks to reusable components.</li><li>The platform handles over 1M tickets a year on this flow.</li></ul>"),
         ],
         "gallery": [
-            ("71VYMYeZDAUaIoNmELOIOI4jRvc.png", "Search results with train classes and seat choice", True),
-            ("dUHS8COcaiEUzhqN2MNxsSGm6w.png", "Route landing page: Lisbon to Albufeira", False),
-            ("lDHcC6Oz78JUWJ53PUviQS8inCw.png", "Route page with search and travel tips", False),
-            ("rZnYb7to9mORx35n2t32pHP8QrY.png", "Desktop and mobile versions of the search", True),
+            ("local:rail-ninja/search", "Home page and the mobile search", True),
+            ("local:rail-ninja/seats", "Timetable with classes, seats and prices on one screen", True),
+            ("local:rail-ninja/route", "Route landing page: Lisbon to Albufeira", False),
+            ("local:rail-ninja/route-detail", "Route page with trains, travel time and popular routes", False),
         ],
     },
     {
@@ -57,8 +67,8 @@ CASES = [
         "card": "Consumer website and apps for booking tours, plus AGORA, the internal tool travel agents work in every day.",
         "lede": "I designed the consumer side of Firebird Tours and the internal tool its travel agents use to plan and manage trips.",
         "meta": [("Company", "Firebird Tours"), ("Period", "2023–2026"), ("My role", "Product designer, led design for the tours line"), ("Platforms", "Web, iOS, Android, internal B2B tool")],
-        "cover": "V0OKow5FVLjzJkm32BB4H40jm4.png",
-        "cover_alt": "Firebird Tours website with tour search and destinations",
+        "cover": "local:firebird/cover",
+        "cover_alt": "Firebird Tours website: home page, tour pages and the client area",
         "sections": [
             ("Context", "<p>Firebird Tours sells guided and custom tours, mostly to travellers from abroad. Agents build itineraries for clients in an internal tool called AGORA.</p>"),
             ("Problem", "<p>Two audiences, one product team. Customers needed a clearer way to find and book a trip; agents needed to handle many trips and clients without switching between tools.</p>"),
@@ -66,11 +76,10 @@ CASES = [
             ("Outcome", "<ul><li>One visual language across the website, apps and internal tool.</li><li>Faster agent workflows in AGORA.</li><li>Shorter development cycles for new features thanks to the shared system.</li></ul>"),
         ],
         "gallery": [
-            ("DQtDMHJFTbG56G3NKeIcmEAEg.png", "Home page with tour search", True),
-            ("c6W2EP8u524zUerdFkkc6f8nM.png", "Client area with upcoming trips", False),
-            ("dx5qhmIy7K21cSHNJAsblBl3u4.png", "Trips in the mobile app", False),
-            ("UpsJ9kUhSCU8s5ztHs55KIINLUg.png", "AGORA: the agent tool for clients and schedules", True),
-            ("hdeBNP0hZNkq55lezqRcITTJxI.png", "Campaign visuals for different markets", True),
+            ("local:firebird/home", "Home page with tour search and destinations", True),
+            ("local:firebird/trips", "Client area with booked trips", False),
+            ("local:firebird/mobile", "Trips and tour style quiz in the mobile app", False),
+            ("local:firebird/agora", "AGORA: offers, orders, schedule and payouts for a guide", True),
         ],
     },
     {
@@ -102,10 +111,10 @@ CASES = [
 
 TALKS = [
     ("2025-10-01", "1 Oct 2025", "The first steps towards your design system",
-     "Hands-on workshop: we built a small design system in Figma together, from foundations to the first documented components. Online, in English.",
+     "Hands-on workshop: we built a small design system in Figma together, from foundations to the first documented components. Online, in English, with Japanese where it helped participants.",
      "11 participants", "https://www.meetup.com/galary-ux-ui-design-community/events/?type=past"),
     ("2025-09-02", "2 Sep 2025", "Intro to design systems",
-     "What separates a UI kit from a design system, why teams need one, and how to start. Online, in English.",
+     "What separates a UI kit from a design system, why teams need one, and how to start. Online, in English, with Japanese where it helped participants.",
      "50 sign-ups", "https://www.meetup.com/galary-ux-ui-design-community/events/?type=past"),
 ]
 
@@ -206,10 +215,10 @@ def index():
     <h1 class="sign-roman">Yar Luchkin</h1>
     <p class="sign-sub"><span lang="ja">プロダクトデザイナー</span>&emsp;Product designer</p>
   </div>
-  <div class="sign-bar">
-    <span class="from"><small lang="ja">ベオグラード</small><strong>Belgrade</strong></span>
-    <span class="here" aria-hidden="true"></span>
-    <span class="to"><small lang="ja">東京</small><strong>Tokyo</strong></span>
+  <div class="sign-bar" aria-hidden="true"></div>
+  <div class="sign-stations">
+    <p class="st-prev"><span class="arrow">◀</span><span><span class="kana" lang="ja">ベオグラード</span><span class="roman">Belgrade</span></span></p>
+    <p class="st-next"><span><span class="kana" lang="ja">東京</span><span class="roman">Tokyo</span></span><span class="arrow">▶</span></p>
   </div>
 </section>
 
@@ -283,7 +292,7 @@ def case_page(i, c):
         for f, cap, wide in c["gallery"]:
             capt = f"<figcaption>{escape(cap)}</figcaption>" if cap else ""
             alt = cap or f"{c['title']}, slide"
-            figs.append(f'  <figure class="{"wide" if wide else ""}"><img src="{img(f)}" alt="{escape(alt)}" loading="lazy" width="1600" height="1200">{capt}</figure>')
+            figs.append(f'  <figure class="{"wide" if wide else ""}"><img src="{img(f, 2000, 2)}"{srcset(f, 2)} alt="{escape(alt)}" loading="lazy" width="1600" height="1200">{capt}</figure>')
         gallery = '<div class="gallery">\n' + "\n".join(figs) + "\n</div>"
     tag = f' <span class="tag">{c["tag"]}</span>' if c.get("tag") else ""
     return head(f"{c['title']} | Yar Luchkin", c["card"], f"/work/{c['slug']}/", 2) + f"""<div class="wrap">
@@ -295,7 +304,7 @@ def case_page(i, c):
 {meta}
   </dl>
 </header>
-<figure class="case-cover"><img src="{img(c['cover'])}" alt="{escape(c['cover_alt'])}" width="1600" height="1200"></figure>
+<figure class="case-cover"><img src="{img(c['cover'], 2000, 2)}"{srcset(c['cover'], 2)} alt="{escape(c['cover_alt'])}" width="1600" height="1200" fetchpriority="high"></figure>
 <div class="case-body">
 {body}
 </div>
