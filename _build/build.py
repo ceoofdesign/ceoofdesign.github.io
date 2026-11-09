@@ -34,7 +34,7 @@ CASES = [
         "slug": "rail-ninja",
         "title": "Rail Ninja: booking train tickets across countries",
         "card": "Search, timetables, seat choice and checkout for a train ticket platform handling over 1M tickets a year.",
-        "lede": "I redesigned the booking flow of Rail Ninja, a platform where travellers buy train tickets in dozens of countries from one site.",
+        "lede": "I redesigned the booking flow of Rail Ninja, a platform where travellers buy train tickets in many countries from one site.",
         "meta": [("Company", "Rail Ninja (Firebird Tours group)"), ("Period", "2023–2026"), ("My role", "Product designer"), ("Platforms", "Web, mobile web")],
         "cover": "6AyHvDjTIuqSqc1iORZHDbHZCwY.png",
         "cover_alt": "Rail Ninja booking app on a phone inside a train",
@@ -110,7 +110,7 @@ TALKS = [
 ]
 
 ROUTE = [
-    ("2026–now", True, "Playerok", "Product designer · contract, remote",
+    ("2026–now", True, "Playerok", "Product designer, contract, remote",
      "C2C marketplace for digital goods with 4M+ users and 250k+ listings. I design the home page, event sections and catalogue screens, and audit the purchase flow with PMs and the design lead."),
     ("2023–2026", False, "Firebird Tours", "Product designer, led design for the tours line",
      "Travel-tech group behind Rail Ninja, Triptile and highspeedtrains.com. Built the multi-brand design system, a hotel booking service and worked with one junior designer."),
@@ -204,7 +204,7 @@ def index():
     <span class="sign-number" aria-hidden="true">PD<b>01</b></span>
     <p class="sign-kana" lang="ja">ヤル・ルチキン</p>
     <h1 class="sign-roman">Yar Luchkin</h1>
-    <p class="sign-sub"><span lang="ja">プロダクトデザイナー</span> · Product designer</p>
+    <p class="sign-sub"><span lang="ja">プロダクトデザイナー</span>&emsp;Product designer</p>
   </div>
   <div class="sign-bar">
     <span class="from"><small lang="ja">ベオグラード</small><strong>Belgrade</strong></span>
@@ -265,7 +265,7 @@ def index():
     <h2 style="font-size:clamp(26px,3.4vw,36px);margin:0 0 16px;font-weight:600;letter-spacing:-0.02em">About</h2>
     <p>I started in PR and advertising, localizing game launches and running campaigns, and moved into design through agency work. That path shows in how I work: I care about who reads the screen, in which language, and what they need to decide.</p>
     <p>In product teams I usually sit between design and engineering. I like turning a messy set of screens into a system that a team can grow without me.</p>
-    <p>I’ve been to Japan twice and study Japanese every week. I work in English and Figma, and I’m comfortable with ProtoPie, Framer and Adobe tools.</p>
+    <p>I’ve visited Japan twice and keep studying Japanese. I work in English and Figma, and I’m comfortable with ProtoPie, Framer and Adobe tools.</p>
   </div>
 </section>
 
